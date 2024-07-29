@@ -1,13 +1,15 @@
 ﻿@page "/weather"
+@using OrderGenerator.Services.Interfaces
 @attribute [StreamRendering]
+@inject IOrderService OrderService
 
-<PageTitle>Weather</PageTitle>
+<PageTitle>Histórcio Ordens</PageTitle>
 
-<h1>Weather</h1>
+<h1>Histórico</h1>
 
-<p>This component demonstrates showing data.</p>
+<p>Listagens de todas as Ordens Realizadas</p>
 
-@if (forecasts == null)
+@if (ordersList == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -16,20 +18,22 @@ else
     <table class="table">
         <thead>
             <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
+                <th>Ativo</th>
+                <th>Lado</th>
+                <th>Quantidade</th>
+                <th>Preco</th>
+                <th>Data</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var forecast in forecasts)
+            @foreach (var order in ordersList.ordens)
             {
                 <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
+                    <td>@order.ativo</td>
+                    <td>@order.lado</td>
+                    <td>@order.quantidade</td>
+                    <td>@order.preco</td>
+                    <td>@order.data</td>                    
                 </tr>
             }
         </tbody>
@@ -37,28 +41,28 @@ else
 }
 
 @code {
-    private WeatherForecast[]? forecasts;
+    private OrdersList ordersList;
+    // private readonly IOrderService _orderService;
+
+    // public Weather(IOrderService orderService)
+    // {
+    //     _orderService = orderService;
+    //     ordersList = new OrdersList();
+    // }
 
     protected override async Task OnInitializedAsync()
     {
-        // Simulate asynchronous loading to demonstrate streaming rendering
-        await Task.Delay(500);
+        ordersList = await OrderService.GetOrders();
 
-        var startDate = DateOnly.FromDateTime(DateTime.Now);
-        var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
-        forecasts = Enumerable.Range(1, 5).Select(index => new WeatherForecast
-        {
-            Date = startDate.AddDays(index),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = summaries[Random.Shared.Next(summaries.Length)]
-        }).ToArray();
-    }
+        // var startDate = DateOnly.FromDateTime(DateTime.Now);
+        // var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
+        // forecasts = Enumerable.Range(1, 5).Select(index => new WeatherForecast
+        // {
+        //     Date = startDate.AddDays(index),
+        //     TemperatureC = Random.Shared.Next(-20, 55),
+        //     Summary = summaries[Random.Shared.Next(summaries.Length)]
+        // }).ToArray();
 
-    private class WeatherForecast
-    {
-        public DateOnly Date { get; set; }
-        public int TemperatureC { get; set; }
-        public string? Summary { get; set; }
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+
     }
 }

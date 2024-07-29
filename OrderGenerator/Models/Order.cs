@@ -2,10 +2,10 @@
 {
     public class Order
     {
-        public AssetsList Asset { get; set; }
-        public string Side { get; set; }    
-        public int Quantity { get; set; }
-        public decimal Price { get; set; }
+        public AssetsList ativo { get; set; }
+        public string lado { get; set; }    
+        public int quantidade { get; set; }
+        public decimal preco { get; set; }
     }
 
     public enum AssetsList

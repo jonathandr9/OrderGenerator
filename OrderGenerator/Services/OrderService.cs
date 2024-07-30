@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using OrderGenerator.Models;
 using OrderGenerator.Services.Interfaces;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace OrderGenerator.Services
@@ -18,8 +19,8 @@ namespace OrderGenerator.Services
         {
             using (var httpClient = _httpClientFactory.CreateClient())
             {
-                var jsonString = await httpClient.GetStringAsync("" +
-                    "");
+                var jsonString = await httpClient.GetStringAsync(
+                    "http://orderaccumulator.us-east-1.elasticbeanstalk.com/Order");
 
                 var response = JsonConvert.DeserializeObject<OrdersList>(jsonString);
 
@@ -31,15 +32,25 @@ namespace OrderGenerator.Services
         {
             using (var httpClient = _httpClientFactory.CreateClient())
             {
-                var content = new StringContent(
-                    JsonConvert.SerializeObject(orderPost), 
-                    Encoding.UTF8, 
-                    "application/json"
+                
+                var stringJson = JsonConvert.SerializeObject(
+                    new
+                    {
+                        ativo = orderPost.ativo.ToString(),
+                        lado = orderPost.lado,
+                        quantidade = orderPost.quantidade,
+                        preco = orderPost.preco
+                    }
                 );
 
+                using StringContent jsonContent = new(
+                   stringJson,
+                   Encoding.UTF8,
+                   "application/json");
+
                 var response = await httpClient.PostAsync(
-                    "",
-                    content
+                    "http://orderaccumulator.us-east-1.elasticbeanstalk.com/Order/exposicao-financeira",
+                    jsonContent
                     );
 
                 var result = JsonConvert.DeserializeObject<OrderPostResult>(

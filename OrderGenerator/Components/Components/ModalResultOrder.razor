@@ -1,0 +1,22 @@
+﻿
+<div>
+    <p>@Message</p>
+
+    @if (String.IsNullOrEmpty(CurrentExposure) == false)
+    {
+        <p>Cotação Atual: @CurrentExposure</p>    
+    }
+
+    <button class="btn btn-primary" @onclick="close">OK</button>
+</div>
+
+@code{
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+
+    [Parameter] public string? Message { get; set; }
+    [Parameter] public string? CurrentExposure { get; set; }
+
+    private async Task close() => await ModalInstance.CancelAsync();
+
+}
+

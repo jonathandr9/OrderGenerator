@@ -1,3 +1,4 @@
+using Blazored.Modal;
 using OrderGenerator.Components;
 using OrderGenerator.Services;
 using OrderGenerator.Services.Interfaces;
@@ -9,6 +10,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddHttpClient();
+builder.Services.AddBlazoredModal();
 builder.Services.AddScoped<IOrderService, OrderService>();
 
 var app = builder.Build();

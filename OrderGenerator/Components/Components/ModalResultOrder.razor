@@ -1,18 +1,32 @@
 ﻿
 <div>
-    <p>@Message</p>
+    @if (Success)
+    {
+        <div class="alert alert-success" role="alert">
+            @Message
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger" role="alert">
+            @Message
+        </div>
+    }
 
     @if (String.IsNullOrEmpty(CurrentExposure) == false)
     {
-        <p>Cotação Atual: @CurrentExposure</p>    
+        <div class="alert alert-info" role="alert">            
+            <p><b>Exposição Atual:</b> @CurrentExposure</p>
+        </div>
     }
 
-    <button class="btn btn-primary" @onclick="close">OK</button>
+    <button class="btn btn-primary" onclick="document.getElementsByClassName('bm-container')[0].style.display='none'">OK</button>
 </div>
 
-@code{
+@code {
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
 
+    [Parameter] public bool Success { get; set; }
     [Parameter] public string? Message { get; set; }
     [Parameter] public string? CurrentExposure { get; set; }
 

@@ -1,0 +1,80 @@
+﻿@page "/history"
+@using OrderGenerator.Services.Interfaces
+@attribute [StreamRendering]
+@inject IOrderService OrderService
+
+<PageTitle>Histórcio Ordens</PageTitle>
+
+<h1>Histórico</h1>
+
+<p>Listagens de todas as Ordens Realizadas</p>
+
+@if (ordersList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <label><b>Valor Total Compras</b></label>
+            <input type="text" class="form-control" value="@totalPurchases" disabled />
+        </div>       
+        <div class="col-md-4">
+            <label><b>Valor Total Vendas</b></label>
+            <input type="text" class="form-control" value="@totalSales" disabled />
+        </div>      
+        <div class="col-md-4">
+            <label><b>Exposição Atual</b></label>
+            <input type="text" class="form-control" value="@exposureValue" disabled />
+        </div>        
+    </div>
+    <hr/>
+    <div class="row">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Ativo</th>
+                    <th>Lado</th>
+                    <th>Quantidade</th>
+                    <th>Preco</th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in ordersList.ordens)
+                {
+                    <tr>
+                        <td>@order.ativo</td>
+                        <td>@order.lado</td>
+                        <td>@order.quantidade</td>
+                        <td>@order.preco</td>
+                        <td>@order.data</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    private OrdersList ordersList;
+    public double totalPurchases { get; set; }
+    public double totalSales { get; set; }
+    public double exposureValue { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ordersList = await OrderService.GetOrders();
+
+        totalPurchases = ordersList.ordens
+                   .Where(x => x.lado == "C")
+                   .Sum(x => x.preco * x.quantidade);
+
+        totalSales = ordersList.ordens
+            .Where(x => x.lado == "V")
+            .Sum(x => x.preco * x.quantidade);
+
+        exposureValue = totalPurchases - totalSales;
+    }
+}
